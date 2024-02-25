@@ -1,7 +1,11 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
 
 from src.routers import customers
+from src.sql_app import models
+from src.sql_app.database import engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
