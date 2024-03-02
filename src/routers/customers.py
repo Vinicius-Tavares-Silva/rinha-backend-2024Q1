@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from src.sql_app import crud, schemas
+from src.sql_app import schemas
 from src.sql_app.database import SessionLocal
 from src.views.transaction_creator_view import TransactionCreatorView
+from src.views.statement_reader_view import StatementReaderView
 
 router = APIRouter(
   prefix='/clientes',
@@ -29,7 +30,10 @@ def create_transactions(
     return operation['data']
   raise HTTPException(status_code=operation['code'], detail=operation['data'])
 
-@router.get('/{id}/extrato', response_model=schemas.Customer)
+@router.get('/{id}/extrato', response_model=schemas.Statement)
 def read_statement(id: str, db: Session = Depends(get_db)):
-  db_customer = crud.get_customer(db, id)
-  return db_customer
+  statement_reader_view = StatementReaderView()
+  operation = statement_reader_view.validate_and_read(db, id)
+  if operation['code'] == 200:
+    return operation['data']
+  raise HTTPException(status_code=operation['code'], detail=operation['data'])
