@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://admin:vini9800@localhost:5432/rinha_db
+    ports:
+      - "9999:9999"
+
+
+volumes:
+      postgres_data: 
